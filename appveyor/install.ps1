@@ -113,6 +113,7 @@ function InstallPython ($python_version, $architecture, $python_home) {
         $platform_suffix = "amd64"
     }
     $installer_path = DownloadPython $python_version $platform_suffix
+    DownloadPython 3.5.4 $platform_suffix
     $installer_ext = [System.IO.Path]::GetExtension($installer_path)
     Write-Host "Installing $installer_path to $python_home"
     $install_log = $python_home + ".log"
@@ -132,7 +133,9 @@ function InstallPython ($python_version, $architecture, $python_home) {
 
 
 function InstallPythonEXE ($exepath, $python_home, $install_log) {
-    $install_args = "/log $install_log /quiet InstallAllUsers=1 TargetDir=$python_home"
+    $uninstall_args = "/log C:\Python35-x64.log /quiet /uninstall InstallAllUsers=1 TargetDir=C:\Python35-x64\"
+    RunCommand C:\projects\pywikibot\python-3.5.4-amd64.exe $uninstall_args
+    $install_args = "/log $install_log /quiet InstallAllUsers=1 TargetDir=$python_home\"
     RunCommand $exepath $install_args
 }
 
