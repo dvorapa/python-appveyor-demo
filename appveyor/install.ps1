@@ -113,14 +113,14 @@ function InstallPython ($python_version, $architecture, $python_home) {
         $platform_suffix = "amd64"
     }
     $installer_path = DownloadPython $python_version $platform_suffix
-    DownloadPython 3.5.4 $platform_suffix
     $installer_ext = [System.IO.Path]::GetExtension($installer_path)
     Write-Host "Installing $installer_path to $python_home"
     $install_log = $python_home + ".log"
     if ($installer_ext -eq '.msi') {
         InstallPythonMSI $installer_path $python_home $install_log
     } else {
-        InstallPythonEXE $installer_path $python_home $install_log
+        $uninstaller_path = DownloadPython 3.5.4 $platform_suffix
+        InstallPythonEXE $installer_path $python_home $install_log $uninstaller_path
     }
     if (Test-Path $python_home) {
         Write-Host "Python $python_version ($architecture) installation complete"
@@ -132,9 +132,9 @@ function InstallPython ($python_version, $architecture, $python_home) {
 }
 
 
-function InstallPythonEXE ($exepath, $python_home, $install_log) {
+function InstallPythonEXE ($exepath, $python_home, $install_log, $unexepath) {
     $uninstall_args = "/log C:\Python35-x64.log /quiet /uninstall InstallAllUsers=1 TargetDir=C:\Python35-x64\"
-    RunCommand C:\projects\pywikibot\python-3.5.4-amd64.exe $uninstall_args
+    RunCommand $unexepath $uninstall_args
     $install_args = "/log $install_log /quiet InstallAllUsers=1 TargetDir=$python_home\"
     RunCommand $exepath $install_args
 }
